@@ -13,7 +13,9 @@ package org.expedientframework.amqp.async.core.client.beans;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
@@ -44,6 +46,8 @@ public class ClientBeansGenerator implements BeanFactoryPostProcessor
     final BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) beanFactory;
     
     generateServiceInterfaceProxyFactoryBean(serviceInterfaceType, beanRegistry);
+    //generateAmqpExchangeFactoryBean(serviceInterfaceType, beanRegistry);
+    generateAsyncAmqpTemplateFactoryBean(serviceInterfaceType, beanFactory, beanRegistry);
   }
 
   private void generateServiceInterfaceProxyFactoryBean(final Class<?> serviceInterfaceType,
@@ -51,22 +55,54 @@ public class ClientBeansGenerator implements BeanFactoryPostProcessor
   {
     final GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
     
-    beanDefinition.setAttribute("id", generateBeanName(serviceInterfaceType, "serviceInterfaceProxy"));
+    beanDefinition.setAttribute("id", BeanNames.generateName(serviceInterfaceType, "serviceInterfaceProxy"));
     beanDefinition.setBeanClass(ServiceInterfaceProxyFactoryBean.class);
     
-    final ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
-    constructorArgumentValues.addGenericArgumentValue(serviceInterfaceType);
+    final ConstructorArgumentValues constructorArgumentValues = generateConstructorArguments(serviceInterfaceType);
     
     beanDefinition.setConstructorArgumentValues(constructorArgumentValues);
     
-    beanRegistry.registerBeanDefinition(generateBeanName(serviceInterfaceType, "serviceInterfaceProxy"), beanDefinition);
+    beanRegistry.registerBeanDefinition(BeanNames.generateName(serviceInterfaceType, "serviceInterfaceProxy"), beanDefinition);
   }
 
-  private String generateBeanName(final Class<?> serviceInterfaceType, final String prefix)
+  private void generateAsyncAmqpTemplateFactoryBean(final Class<?> serviceInterfaceType, 
+                                                    final BeanFactory beanFactory,
+                                                    final BeanDefinitionRegistry beanRegistry)
   {
-    return prefix + "-" + serviceInterfaceType.getName();        
+    final GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+    
+    beanDefinition.setAttribute("id", BeanNames.asyncAmqpTemplate(serviceInterfaceType));
+    beanDefinition.setBeanClass(AsyncAmqpTemplateFactoryBean.class);
+    
+    final ConstructorArgumentValues constructorArgumentValues = generateConstructorArguments(serviceInterfaceType);
+    constructorArgumentValues.addGenericArgumentValue(beanFactory.getBean(ConnectionFactory.class));
+    
+    beanDefinition.setConstructorArgumentValues(constructorArgumentValues);
+        
+    beanRegistry.registerBeanDefinition(BeanNames.asyncAmqpTemplate(serviceInterfaceType), beanDefinition);
   }
-  
+
+  private void generateAmqpExchangeFactoryBean(final Class<?> serviceInterfaceType, final BeanDefinitionRegistry beanRegistry)
+  {
+    final GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+    
+    beanDefinition.setAttribute("id", BeanNames.generateName(serviceInterfaceType, "exchange"));
+    beanDefinition.setBeanClass(AmqpExchangeFactoryBean.class);
+    
+    final ConstructorArgumentValues constructorArgumentValues = generateConstructorArguments(serviceInterfaceType);
+    
+    beanDefinition.setConstructorArgumentValues(constructorArgumentValues);
+    
+    beanRegistry.registerBeanDefinition(BeanNames.generateName(serviceInterfaceType, "exchange"), beanDefinition);
+  }
+
+  private ConstructorArgumentValues generateConstructorArguments(final Class<?> serviceInterfaceType)
+  {
+    final ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
+    constructorArgumentValues.addGenericArgumentValue(serviceInterfaceType);
+    return constructorArgumentValues;
+  }
+
   private static final Logger LOG = LoggerFactory.getLogger(ClientBeansGenerator.class);
 }
 

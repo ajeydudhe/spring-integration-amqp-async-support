@@ -16,15 +16,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import org.expedientframework.amqp.async.core.client.RemoteMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.FactoryBean;
 
-public class ServiceInterfaceProxyFactoryBean implements FactoryBean<Object>, InvocationHandler
+public class ServiceInterfaceProxyFactoryBean extends AbstractFactoryBean<Object> implements InvocationHandler
 {
   public ServiceInterfaceProxyFactoryBean(final Class<?> serviceInterfaceType)
   {
-    this.serviceInterfaceType = serviceInterfaceType;
+    super(serviceInterfaceType);
   }
   
   @Override
@@ -49,7 +46,6 @@ public class ServiceInterfaceProxyFactoryBean implements FactoryBean<Object>, In
     return null;
   }
 
-  private final Class<?> serviceInterfaceType;
-  private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceProxyFactoryBean.class);
+  //private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceProxyFactoryBean.class);
 }
 
