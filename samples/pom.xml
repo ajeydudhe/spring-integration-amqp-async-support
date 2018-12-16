@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.expedientframework.amqp</groupId>
-    <artifactId>spring-integration-amqp-async-support</artifactId>
+    <artifactId>amqp-async-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>samples</artifactId>
