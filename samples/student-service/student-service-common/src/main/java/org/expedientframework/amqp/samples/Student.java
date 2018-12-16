@@ -9,7 +9,7 @@
  *
  *******************************************************************/
 
-package com.expedientframework.amqp.samples;
+package org.expedientframework.amqp.samples;
 
 import java.io.Serializable;
 

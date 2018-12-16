@@ -7,21 +7,10 @@
     <relativePath />
   </parent>
   <groupId>org.expedientframework.amqp</groupId>
-  <artifactId>student-service-client</artifactId>
+  <artifactId>amqp-async-core</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-
+  
   <dependencies>
-    <dependency>
-      <groupId>org.expedientframework.amqp</groupId>
-      <artifactId>amqp-async-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.expedientframework.amqp</groupId>
-      <artifactId>student-service-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-integration</artifactId>
@@ -39,4 +28,5 @@
       <artifactId>spring-integration-amqp</artifactId>
     </dependency>
   </dependencies>
+
 </project>

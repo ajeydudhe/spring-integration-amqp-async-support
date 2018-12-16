@@ -9,7 +9,7 @@
  *
  *******************************************************************/
 
-package com.expedientframework.amqp.samples;
+package org.expedientframework.amqp.samples;
   
 public interface StudentService
 {

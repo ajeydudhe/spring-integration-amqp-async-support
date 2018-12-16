@@ -9,9 +9,12 @@
  *
  *******************************************************************/
 
-package com.expedientframework.amqp.samples;
+package org.expedientframework.amqp.samples;
 
 import java.util.Random;
+
+import org.expedientframework.amqp.samples.Student;
+import org.expedientframework.amqp.samples.StudentService;
 
 public class StudentServiceImpl implements StudentService
 {

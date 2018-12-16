@@ -26,6 +26,7 @@
   </build>
   
   <modules>
+    <module>amqp-async-core</module>
   	<module>samples</module>
   </modules>
 </project>
