@@ -13,7 +13,6 @@ package org.expedientframework.amqp.samples;
 
 import javax.inject.Inject;
 
-import org.expedientframework.amqp.async.core.client.AsyncAmqpRemoteMethodExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -21,10 +20,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.integration.annotation.IntegrationComponentScan;
+import static org.expedientframework.amqp.async.core.client.AsyncAmqpRemoteMethodExecutor.async;
 
 @SpringBootApplication
 @IntegrationComponentScan
-@ComponentScan(basePackages= {"org.expedientframework.amqp.async.core.client.beans", "org.expedientframework.amqp.samples"})
+//@ComponentScan(basePackages= {"org.expedientframework.amqp.async.core.client.beans", "org.expedientframework.amqp.samples"})
+@ComponentScan(basePackages= {"org.expedientframework.amqp.samples"})
+@ComponentScan(basePackageClasses=org.expedientframework.amqp.async.core.client.beans.ClientBeansGenerator.class)
 public class Main implements CommandLineRunner
 {
   public static void main(final String[] args)
@@ -37,7 +39,7 @@ public class Main implements CommandLineRunner
   {
     LOG.info("Starting client...");
     
-    async.execute(studentService.get(1234));
+    async(studentService.get(1234));
   }
   
   @Inject
@@ -46,14 +48,7 @@ public class Main implements CommandLineRunner
     this.studentService = studentService;
   }
   
-  @Inject
-  public void setAsyncAmqpRemoteMethodExecutor(final AsyncAmqpRemoteMethodExecutor asyncAmqpRemoteMethodExecutor)
-  {
-    this.async = asyncAmqpRemoteMethodExecutor;
-  }
-  
   private StudentService studentService;
-  private AsyncAmqpRemoteMethodExecutor async;
   private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 }
 

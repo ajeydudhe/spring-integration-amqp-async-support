@@ -45,12 +45,13 @@ public class ClientBeansGenerator implements BeanFactoryPostProcessor
     
     final BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) beanFactory;
     
-    generateServiceInterfaceProxyFactoryBean(serviceInterfaceType, beanRegistry);
-    //generateAmqpExchangeFactoryBean(serviceInterfaceType, beanRegistry);
+    //TODO: Ajey - For each bean we should first check if there is bean with name already added to override or manually configure it.
     generateAsyncAmqpTemplateFactoryBean(serviceInterfaceType, beanFactory, beanRegistry);
+    generateServiceInterfaceProxyFactoryBean(serviceInterfaceType, beanFactory, beanRegistry);
   }
 
   private void generateServiceInterfaceProxyFactoryBean(final Class<?> serviceInterfaceType,
+                                                        final BeanFactory beanFactory,      
                                                         final BeanDefinitionRegistry beanRegistry)
   {
     final GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
@@ -60,9 +61,15 @@ public class ClientBeansGenerator implements BeanFactoryPostProcessor
     
     final ConstructorArgumentValues constructorArgumentValues = generateConstructorArguments(serviceInterfaceType);
     
+    final String asyncTemplateBeanName = BeanNames.asyncAmqpTemplate(serviceInterfaceType);
+    constructorArgumentValues.addGenericArgumentValue(beanFactory.getBean(asyncTemplateBeanName));
+    
     beanDefinition.setConstructorArgumentValues(constructorArgumentValues);
     
-    beanRegistry.registerBeanDefinition(BeanNames.generateName(serviceInterfaceType, "serviceInterfaceProxy"), beanDefinition);
+    final String beanName = BeanNames.generateName(serviceInterfaceType, "serviceInterfaceProxy");
+    beanRegistry.registerBeanDefinition(beanName, beanDefinition);
+    
+    LOG.info("Added bean [{}]", beanName);
   }
 
   private void generateAsyncAmqpTemplateFactoryBean(final Class<?> serviceInterfaceType, 
@@ -79,21 +86,10 @@ public class ClientBeansGenerator implements BeanFactoryPostProcessor
     
     beanDefinition.setConstructorArgumentValues(constructorArgumentValues);
         
-    beanRegistry.registerBeanDefinition(BeanNames.asyncAmqpTemplate(serviceInterfaceType), beanDefinition);
-  }
+    final String beanName = BeanNames.asyncAmqpTemplate(serviceInterfaceType);
+    beanRegistry.registerBeanDefinition(beanName, beanDefinition);
 
-  private void generateAmqpExchangeFactoryBean(final Class<?> serviceInterfaceType, final BeanDefinitionRegistry beanRegistry)
-  {
-    final GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-    
-    beanDefinition.setAttribute("id", BeanNames.generateName(serviceInterfaceType, "exchange"));
-    beanDefinition.setBeanClass(AmqpExchangeFactoryBean.class);
-    
-    final ConstructorArgumentValues constructorArgumentValues = generateConstructorArguments(serviceInterfaceType);
-    
-    beanDefinition.setConstructorArgumentValues(constructorArgumentValues);
-    
-    beanRegistry.registerBeanDefinition(BeanNames.generateName(serviceInterfaceType, "exchange"), beanDefinition);
+    LOG.info("Added bean [{}]", beanName);
   }
 
   private ConstructorArgumentValues generateConstructorArguments(final Class<?> serviceInterfaceType)

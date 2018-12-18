@@ -11,9 +11,10 @@
 
 package org.expedientframework.amqp.async.core.client;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AsyncAmqpTemplate;
 
 /**
  * TODO: Update with a detailed description of the interface/class.
@@ -21,21 +22,16 @@ import org.springframework.amqp.core.AsyncAmqpTemplate;
  */
 public final class AsyncAmqpRemoteMethodExecutor
 {
-  public AsyncAmqpRemoteMethodExecutor(final AsyncAmqpTemplate asyncAmqpTemplate)
-  {
-    this.asyncAmqpTemplate = asyncAmqpTemplate;
-  }
-  
-  public <T> T execute(T expectedResult)
+  public static <T> CompletableFuture<T> async(T resultType)
   {
     final RemoteMethod remoteMethod = RemoteMethod.get();
     
     LOG.info("Executing remotely: {}", remoteMethod.getMethod());
+    LOG.info("AsyncAmqpTemplate: {}", remoteMethod.getAsyncAmqpTemplate());
     
     return null;
   }
   
-  private final AsyncAmqpTemplate asyncAmqpTemplate;
   private static final Logger LOG = LoggerFactory.getLogger(AsyncAmqpRemoteMethodExecutor.class);
 }
 
