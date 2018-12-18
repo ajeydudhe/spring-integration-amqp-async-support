@@ -38,5 +38,11 @@
       <groupId>org.springframework.integration</groupId>
       <artifactId>spring-integration-amqp</artifactId>
     </dependency>
+    
+    <!-- Logging -->
+		<dependency>
+		    <groupId>ch.qos.logback</groupId>
+		    <artifactId>logback-classic</artifactId>
+		</dependency>
   </dependencies>
 </project>

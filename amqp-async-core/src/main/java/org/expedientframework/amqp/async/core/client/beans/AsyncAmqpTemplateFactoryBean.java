@@ -32,9 +32,15 @@ public class AsyncAmqpTemplateFactoryBean extends AbstractFactoryBean<AsyncAmqpT
   public AsyncAmqpTemplate getObject() throws Exception
   {
     final RabbitTemplate rabbitTemplate = new RabbitTemplate(this.connectionFactory);
-    rabbitTemplate.setExchange(BeanNames.exchange(this.serviceInterfaceType));
     
-    return new AsyncRabbitTemplate(rabbitTemplate);
+    final String exchangeName = BeanNames.exchange(this.serviceInterfaceType);
+    rabbitTemplate.setExchange(exchangeName);
+        
+    final AsyncRabbitTemplate asyncRabbitTemplate = new AsyncRabbitTemplate(rabbitTemplate);
+    
+    asyncRabbitTemplate.start();
+    
+    return asyncRabbitTemplate;
   }
 
   @Override

@@ -45,6 +45,6 @@ public class Beans
     factory.setPort(5672);
     
     return factory;
-  }
+  }  
 }
 

@@ -20,7 +20,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.integration.annotation.IntegrationComponentScan;
+
 import static org.expedientframework.amqp.async.core.client.AsyncAmqpRemoteMethodExecutor.async;
+
+import java.io.IOException;
 
 @SpringBootApplication
 @IntegrationComponentScan
@@ -29,9 +32,11 @@ import static org.expedientframework.amqp.async.core.client.AsyncAmqpRemoteMetho
 @ComponentScan(basePackageClasses=org.expedientframework.amqp.async.core.client.beans.ClientBeansGenerator.class)
 public class Main implements CommandLineRunner
 {
-  public static void main(final String[] args)
+  public static void main(final String[] args) throws IOException
   {
     SpringApplication.run(Main.class, args);
+    
+    System.in.read();
   }
 
   @Override
