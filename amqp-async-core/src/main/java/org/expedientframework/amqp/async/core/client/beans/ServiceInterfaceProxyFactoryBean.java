@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import org.expedientframework.amqp.async.core.client.RemoteMethod;
+import org.expedientframework.amqp.async.core.client.RemoteExecutionContext;
 import org.springframework.amqp.core.AsyncAmqpTemplate;
 
 public class ServiceInterfaceProxyFactoryBean extends AbstractFactoryBean<Object> implements InvocationHandler
@@ -44,7 +44,7 @@ public class ServiceInterfaceProxyFactoryBean extends AbstractFactoryBean<Object
   @Override
   public Object invoke(final Object proxy, final Method method, final Object[] arguments) throws Throwable
   {
-    RemoteMethod.save(method, arguments, this.asyncAmqpTemplate);
+    RemoteExecutionContext.save(method, arguments, this.asyncAmqpTemplate);
     
     return null;
   }
