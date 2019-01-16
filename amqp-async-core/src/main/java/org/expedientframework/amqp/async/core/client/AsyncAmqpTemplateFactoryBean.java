@@ -9,8 +9,10 @@
  *
  *******************************************************************/
 
-package org.expedientframework.amqp.async.core.client.beans;
+package org.expedientframework.amqp.async.core.client;
 
+import org.expedientframework.amqp.async.core.beans.AbstractFactoryBean;
+import org.expedientframework.amqp.async.core.beans.BeanNames;
 import org.springframework.amqp.core.AsyncAmqpTemplate;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

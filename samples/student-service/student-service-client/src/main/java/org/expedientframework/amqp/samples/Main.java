@@ -29,14 +29,12 @@ import java.io.IOException;
 @IntegrationComponentScan
 //@ComponentScan(basePackages= {"org.expedientframework.amqp.async.core.client.beans", "org.expedientframework.amqp.samples"})
 @ComponentScan(basePackages= {"org.expedientframework.amqp.samples"})
-@ComponentScan(basePackageClasses=org.expedientframework.amqp.async.core.client.beans.ClientBeansGenerator.class)
+@ComponentScan(basePackageClasses=org.expedientframework.amqp.async.core.client.ClientBeansGenerator.class)
 public class Main implements CommandLineRunner
 {
   public static void main(final String[] args) throws IOException
   {
     SpringApplication.run(Main.class, args);
-    
-    System.in.read();
   }
 
   @Override
@@ -44,7 +42,14 @@ public class Main implements CommandLineRunner
   {
     LOG.info("Starting client...");
     
-    async(studentService.get(1234));
+    async(studentService.get(1234)).handle((student, exception) -> {
+      
+      LOG.info("Received async result...");
+      
+      return student;
+    });
+    
+    LOG.info("Waiting for async call to complete...");
   }
   
   @Inject

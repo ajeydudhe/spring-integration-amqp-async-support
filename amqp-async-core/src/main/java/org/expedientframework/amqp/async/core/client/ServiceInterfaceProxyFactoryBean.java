@@ -9,13 +9,13 @@
  *
  *******************************************************************/
 
-package org.expedientframework.amqp.async.core.client.beans;
+package org.expedientframework.amqp.async.core.client;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import org.expedientframework.amqp.async.core.client.RemoteExecutionContext;
+import org.expedientframework.amqp.async.core.beans.AbstractFactoryBean;
 import org.springframework.amqp.core.AsyncAmqpTemplate;
 
 public class ServiceInterfaceProxyFactoryBean extends AbstractFactoryBean<Object> implements InvocationHandler

@@ -9,7 +9,7 @@
  *
  *******************************************************************/
 
-package org.expedientframework.amqp.async.core.client.beans;
+package org.expedientframework.amqp.async.core.beans;
   
 /**
  * TODO: Update with a detailed description of the interface/class.

@@ -9,7 +9,7 @@
  *
  *******************************************************************/
 
-package org.expedientframework.amqp.async.core.client.beans;
+package org.expedientframework.amqp.async.core.beans;
 
 import java.util.List;
 
