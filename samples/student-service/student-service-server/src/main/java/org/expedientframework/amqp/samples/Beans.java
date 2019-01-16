@@ -27,9 +27,17 @@ public class Beans
     return new ServiceInterfaceProvider()
     {      
       @Override
-      public List<Class<?>> serviceInterfaces()
+      public List<Class<?>> clients()
       {
-        return Arrays.asList(StudentService.class);
+        // TODO Auto-generated method stub
+        return null;
+      }
+
+      @Override
+      public List<Class<?>> servers()
+      {
+        // TODO Auto-generated method stub
+        return null;
       }
     };
   }

@@ -29,7 +29,7 @@ import java.io.IOException;
 @IntegrationComponentScan
 //@ComponentScan(basePackages= {"org.expedientframework.amqp.async.core.client.beans", "org.expedientframework.amqp.samples"})
 @ComponentScan(basePackages= {"org.expedientframework.amqp.samples"})
-@ComponentScan(basePackageClasses=org.expedientframework.amqp.async.core.client.ClientBeansGenerator.class)
+@ComponentScan(basePackageClasses=org.expedientframework.amqp.async.core.beans.BeansGenerator.class)
 public class Main implements CommandLineRunner
 {
   public static void main(final String[] args) throws IOException

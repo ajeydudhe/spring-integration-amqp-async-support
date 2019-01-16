@@ -1,18 +1,18 @@
 /********************************************************************
- * File Name:    ClientBeansGenerator.java
+ * File Name:    BeansGenerator.java
  *
- * Date Created: Dec 16, 2018
+ * Date Created: Jan 15, 2019
  *
  * ------------------------------------------------------------------
  * 
- * Copyright (c) 2018 ajeydudhe@gmail.com
+ * Copyright (c) 2019 ajeydudhe@gmail.com
  *
  *******************************************************************/
 
-package org.expedientframework.amqp.async.core.client;
+package org.expedientframework.amqp.async.core.beans;
 
-import org.expedientframework.amqp.async.core.beans.BeanNames;
-import org.expedientframework.amqp.async.core.beans.ServiceInterfaceProvider;
+import org.expedientframework.amqp.async.core.client.AsyncAmqpTemplateFactoryBean;
+import org.expedientframework.amqp.async.core.client.ServiceInterfaceProxyFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -26,7 +26,7 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ClientBeansGenerator implements BeanFactoryPostProcessor
+public class BeansGenerator implements BeanFactoryPostProcessor
 {
   @Override
   public void postProcessBeanFactory(final ConfigurableListableBeanFactory beanFactory) throws BeansException
@@ -34,22 +34,38 @@ public class ClientBeansGenerator implements BeanFactoryPostProcessor
     LOG.info("Searching for ServiceInterfaceProvider beans..."); //TODO: Ajey - Change the log level to debug.
     
     beanFactory.getBeansOfType(ServiceInterfaceProvider.class)
-    .forEach((beanName, beanClass) -> {
-      
-      LOG.info("Found bean [{}] with class [{}]", beanName, beanClass);
-      beanClass.serviceInterfaces().forEach(serviceInterfaceClass -> generateBeans(serviceInterfaceClass, beanFactory));
-    });
+               .forEach((beanName, beanClass) -> {
+                  
+                 LOG.info("Found bean [{}] with class [{}]", beanName, beanClass);
+                 if(beanClass.clients() != null)
+                 {
+                   beanClass.clients().forEach(serviceInterfaceClass -> generateClientBeans(serviceInterfaceClass, beanFactory));
+                 }
+                 if(beanClass.servers() != null)
+                 {
+                   beanClass.servers().forEach(serviceInterfaceClass -> generateServerBeans(serviceInterfaceClass, beanFactory));
+                 }
+               });
   }
     
-  private void generateBeans(final Class<?> serviceInterfaceType, final ConfigurableListableBeanFactory beanFactory)
+  private void generateClientBeans(final Class<?> serviceInterfaceType, final ConfigurableListableBeanFactory beanFactory)
   {
-    LOG.info("Generating beans for [{}]", serviceInterfaceType);
+    LOG.info("Generating client beans for [{}]", serviceInterfaceType);
     
     final BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) beanFactory;
     
     //TODO: Ajey - For each bean we should first check if there is bean with name already added to override or manually configure it.
     generateAsyncAmqpTemplateFactoryBean(serviceInterfaceType, beanFactory, beanRegistry);
     generateServiceInterfaceProxyFactoryBean(serviceInterfaceType, beanFactory, beanRegistry);
+  }
+
+  private void generateServerBeans(final Class<?> serviceInterfaceType, final ConfigurableListableBeanFactory beanFactory)
+  {
+    LOG.info("Generating server beans for [{}]", serviceInterfaceType);
+    
+    final BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) beanFactory;
+    
+    //TODO: Ajey - For each bean we should first check if there is bean with name already added to override or manually configure it.
   }
 
   private void generateServiceInterfaceProxyFactoryBean(final Class<?> serviceInterfaceType,
@@ -101,6 +117,6 @@ public class ClientBeansGenerator implements BeanFactoryPostProcessor
     return constructorArgumentValues;
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(ClientBeansGenerator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BeansGenerator.class);
 }
 

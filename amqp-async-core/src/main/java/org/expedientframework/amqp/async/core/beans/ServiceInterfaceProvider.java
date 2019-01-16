@@ -15,6 +15,7 @@ import java.util.List;
 
 public interface ServiceInterfaceProvider
 {
-  public List<Class<?>> serviceInterfaces();
+  public List<Class<?>> clients();
+  public List<Class<?>> servers();
 }
 

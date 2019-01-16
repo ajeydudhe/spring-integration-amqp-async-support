@@ -29,9 +29,15 @@ public class Beans
     return new ServiceInterfaceProvider()
     {      
       @Override
-      public List<Class<?>> serviceInterfaces()
+      public List<Class<?>> clients()
       {
         return Arrays.asList(StudentService.class);
+      }
+
+      @Override
+      public List<Class<?>> servers()
+      {
+        return null;
       }
     };
   }
