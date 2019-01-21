@@ -18,19 +18,21 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.integration.annotation.IntegrationComponentScan;
+import org.springframework.integration.config.EnableIntegration;
 
 @SpringBootApplication
 @IntegrationComponentScan
+@EnableIntegration
 @ComponentScan(basePackages= {"org.expedientframework.amqp.samples"})
 @ComponentScan(basePackageClasses=org.expedientframework.amqp.async.core.beans.BeansGenerator.class)
-public class Main implements CommandLineRunner
+public class Main /*implements CommandLineRunner*/
 {
   public static void main(String[] args)
   {
     SpringApplication.run(Main.class, args);
   }
 
-  @Override
+  //@Override
   public void run(String... args) throws Exception
   {
     LOG.info("Running server...");

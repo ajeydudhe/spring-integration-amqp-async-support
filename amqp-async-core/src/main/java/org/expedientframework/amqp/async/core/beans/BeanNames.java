@@ -27,14 +27,29 @@ public class BeanNames
     return generateName(type, "exchange");
   }
 
+  public static String queue(final Class<?> type)
+  {
+    return generateName(type, "queue");
+  }
+
+  public static String binding(final Class<?> type)
+  {
+    return generateName(type, "binding");
+  }
+  
   public static String asyncAmqpTemplate(final Class<?> type)
   {
     return generateName(type, "asyncAmqpTemplate");
   }
 
-  public static String messageChannel(final Class<?> type)
+  public static String messageListener(final Class<?> type)
   {
-    return generateName(type, "messageChannel");
+    return generateName(type, "messageListener");
+  }
+
+  public static String integrationFlow(final Class<?> type)
+  {
+    return generateName(type, "integrationFlow");
   }
 }
 

@@ -18,7 +18,7 @@
     </dependency>
     <dependency>
       <groupId>org.expedientframework.amqp</groupId>
-      <artifactId>student-service-common</artifactId>
+      <artifactId>student-service-core</artifactId>
       <version>${project.version}</version>
     </dependency>
 

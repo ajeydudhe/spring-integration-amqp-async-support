@@ -28,7 +28,7 @@ public class ServiceInterfaceProxyFactoryBean extends AbstractFactoryBean<Object
   }
   
   @Override
-  public Object getObject() throws Exception
+  protected Object createInstance() throws Exception
   {
     return Proxy.newProxyInstance(this.serviceInterfaceType.getClassLoader(), 
                                   new Class<?>[] {this.serviceInterfaceType},

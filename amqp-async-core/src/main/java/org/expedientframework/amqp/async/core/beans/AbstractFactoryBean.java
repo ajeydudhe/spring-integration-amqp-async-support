@@ -11,13 +11,11 @@
 
 package org.expedientframework.amqp.async.core.beans;
 
-import org.springframework.beans.factory.FactoryBean;
-
 /**
  * TODO: Update with a detailed description of the interface/class.
  *
  */
-public abstract class AbstractFactoryBean<T> implements FactoryBean<T>
+public abstract class AbstractFactoryBean<T> extends org.springframework.beans.factory.config.AbstractFactoryBean<T>
 {
   protected AbstractFactoryBean(final Class<?> serviceInterfaceType)
   {

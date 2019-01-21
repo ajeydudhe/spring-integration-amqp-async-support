@@ -31,7 +31,7 @@ public class AsyncAmqpTemplateFactoryBean extends AbstractFactoryBean<AsyncAmqpT
   }
   
   @Override
-  public AsyncAmqpTemplate getObject() throws Exception
+  protected AsyncAmqpTemplate createInstance() throws Exception
   {
     final RabbitTemplate rabbitTemplate = new RabbitTemplate(this.connectionFactory);
     
