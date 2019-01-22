@@ -40,6 +40,8 @@ public class AsyncAmqpTemplateFactoryBean extends AbstractFactoryBean<AsyncAmqpT
         
     final AsyncRabbitTemplate asyncRabbitTemplate = new AsyncRabbitTemplate(rabbitTemplate);
     
+    logger.error("### Exchange = " + exchangeName);
+    
     asyncRabbitTemplate.start();
     
     return asyncRabbitTemplate;

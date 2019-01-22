@@ -31,7 +31,7 @@ public class AmqpExchangeFactoryBean extends AbstractFactoryBean<Exchange>
   protected Exchange createInstance() throws Exception
   {
     final String exchangeName = BeanNames.exchange(this.serviceInterfaceType);
-    return ExchangeBuilder.topicExchange(exchangeName).durable(true).autoDelete().build();
+    return ExchangeBuilder.topicExchange(exchangeName).durable(false).autoDelete().build();
   }
 
   @Override

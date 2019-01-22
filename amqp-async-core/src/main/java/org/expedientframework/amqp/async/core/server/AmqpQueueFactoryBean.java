@@ -31,8 +31,7 @@ public class AmqpQueueFactoryBean extends AbstractFactoryBean<Queue>
   protected Queue createInstance() throws Exception
   {
     final String queueName = BeanNames.queue(this.serviceInterfaceType);
-    final Queue queue = QueueBuilder.durable(queueName).autoDelete().build();
-    System.out.println("### Created queue: " + queue);
+    final Queue queue = QueueBuilder.nonDurable(queueName).autoDelete().build();
     
     return queue;
   }

@@ -13,7 +13,6 @@ package org.expedientframework.amqp.async.core.server;
 
 import org.expedientframework.amqp.async.core.beans.AbstractFactoryBean;
 import org.expedientframework.amqp.async.core.beans.BeanNames;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
@@ -25,13 +24,11 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 public class AmqpMessageListenerContainerFactoryBean extends AbstractFactoryBean<SimpleMessageListenerContainer>
 {
   public AmqpMessageListenerContainerFactoryBean(final Class<?> serviceInterfaceType,
-                                                 final ConnectionFactory connectionFactory,
-                                                 final Queue queue)
+                                                 final ConnectionFactory connectionFactory)
   {
     super(serviceInterfaceType);
     
     this.connectionFactory = connectionFactory;
-    this.queue = queue;
   }
 
   @Override
@@ -39,12 +36,17 @@ public class AmqpMessageListenerContainerFactoryBean extends AbstractFactoryBean
   {
     final SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(this.connectionFactory);
     
-    //container.setQueues(this.queue);
     container.setQueueNames(BeanNames.queue(this.serviceInterfaceType));
     
-    container.start();
+    container.setAutoStartup(true);
     
     return container;
+  }
+  
+  @Override
+  public void afterPropertiesSet() throws Exception
+  {
+    super.afterPropertiesSet();
   }
   
   @Override
@@ -54,6 +56,5 @@ public class AmqpMessageListenerContainerFactoryBean extends AbstractFactoryBean
   }
 
   private final ConnectionFactory connectionFactory;
-  private final Queue queue;
 }
 

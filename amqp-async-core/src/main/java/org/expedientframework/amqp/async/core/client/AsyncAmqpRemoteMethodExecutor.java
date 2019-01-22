@@ -45,6 +45,8 @@ public final class AsyncAmqpRemoteMethodExecutor
       //TODO: Ajey - Handle methods without parameters, handle method returning void etc.
       final ListenableFuture<Message> rabbitFuture = RemoteExecutionContext.getAsyncAmqpTemplate().sendAndReceive(payload);
       
+      LOG.info("sendAndReceive() called with payload...");
+      
       rabbitFuture.addCallback(result -> handleResult(result, futureResult),
                                exception -> handleException(exception, futureResult));
       

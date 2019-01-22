@@ -11,7 +11,6 @@
 
 package org.expedientframework.amqp.async.core.server;
 
-import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.integration.amqp.dsl.Amqp;
@@ -54,7 +53,8 @@ public class IntegrationFlowFactoryBean extends AbstractFactoryBean<IntegrationF
                       public Object handle(final Object[] payload, final MessageHeaders headers)
                       {
                         logger.info("### Server called...");
-                        return null;
+                        
+                        return "dummyValue";
                       }
                     })
                     .transform(Transformers.serializer())

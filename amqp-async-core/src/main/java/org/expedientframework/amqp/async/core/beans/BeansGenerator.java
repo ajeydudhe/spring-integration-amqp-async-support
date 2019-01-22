@@ -110,7 +110,6 @@ public class BeansGenerator implements BeanFactoryPostProcessor, PriorityOrdered
                                                                 serviceInterfaceType);
     
     builder.addConstructorArgValue(beanFactory.getBean(ConnectionFactory.class));
-    builder.addConstructorArgValue(beanFactory.getBean(BeanNames.queue(serviceInterfaceType)));
     
     final String beanName = BeanNames.messageListener(serviceInterfaceType);
     beanRegistry.registerBeanDefinition(beanName, builder.getBeanDefinition());
