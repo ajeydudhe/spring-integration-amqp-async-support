@@ -51,6 +51,12 @@ public class Student implements Serializable
     this.identifier = identifier;
   }
 
+  @Override
+  public String toString()
+  {
+    return String.format("%s %s", this.firstName, this.lastName);
+  }
+  
   private String firstName;
   private String lastName;
   private Integer identifier;

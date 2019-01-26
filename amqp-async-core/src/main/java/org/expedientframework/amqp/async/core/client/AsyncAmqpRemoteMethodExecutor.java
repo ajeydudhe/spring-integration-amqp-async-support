@@ -11,6 +11,7 @@
 
 package org.expedientframework.amqp.async.core.client;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
@@ -31,13 +32,14 @@ public final class AsyncAmqpRemoteMethodExecutor
   {
     try
     {
-      LOG.info("Executing remotely: {}", RemoteExecutionContext.getMethod());
+      final Method remoteMethod = RemoteExecutionContext.getMethod();
+      LOG.info("Executing remotely: {}", remoteMethod);
       
       final GenericMessage<Object[]> genericMessage = new GenericMessage<Object[]>(RemoteExecutionContext.getArguments());
       
       //TODO: Ajey - We should also pass the argument types so that the method look up on server side will work in case of method overloading.
       final Message payload = MessageBuilder.withBody(Transformers.serializer().doTransform(genericMessage))
-                                            .setHeaderIfAbsent("remote_gateway_method", RemoteExecutionContext.getMethod().getName())
+                                            .setHeaderIfAbsent("remote_gateway_method", remoteMethod.getName())
                                             .build();
       
       final CompletableFuture<T> futureResult = new CompletableFuture<>();
@@ -47,8 +49,8 @@ public final class AsyncAmqpRemoteMethodExecutor
       
       LOG.info("sendAndReceive() called with payload...");
       
-      rabbitFuture.addCallback(result -> handleResult(result, futureResult),
-                               exception -> handleException(exception, futureResult));
+      rabbitFuture.addCallback(result -> handleResult(result, futureResult, remoteMethod),
+                               exception -> handleException(exception, futureResult, remoteMethod));
       
       return futureResult;
     }
@@ -64,11 +66,13 @@ public final class AsyncAmqpRemoteMethodExecutor
   }
   
   @SuppressWarnings("unchecked")
-  private static <T> void handleResult(final Message result, final CompletableFuture<T> futureResult)
+  private static <T> void handleResult(final Message result, 
+                                       final CompletableFuture<T> futureResult,
+                                       final Method remoteMethod)
   {
     try
     {
-      LOG.info("Received results for remote method: {}", RemoteExecutionContext.getMethod());
+      LOG.info("Received results for remote method: {}", remoteMethod);
       
       final GenericMessage<byte[]> resultPayload = new GenericMessage<>(result.getBody());
       final Object finalResult = Transformers.deserializer().doTransform(resultPayload);
@@ -82,9 +86,11 @@ public final class AsyncAmqpRemoteMethodExecutor
     }
   }
 
-  private static <T> void handleException(final Throwable exception, final CompletableFuture<T> futureResult)
+  private static <T> void handleException(final Throwable exception, 
+                                          final CompletableFuture<T> futureResult,
+                                          final Method remoteMethod)
   {
-    LOG.error("Received exception for remote method: {}", RemoteExecutionContext.getMethod());
+    LOG.error("Received exception for remote method: {}", remoteMethod);
     futureResult.completeExceptionally(exception);
   }
 

@@ -44,7 +44,9 @@ public class Main implements CommandLineRunner
     
     async(studentService.get(1234)).handle((student, exception) -> {
       
-      LOG.info("Received async result...");
+      LOG.info("Received async result: {}", student);
+      
+      //TODO: Ajey - Throw on exception !!!
       
       return student;
     });

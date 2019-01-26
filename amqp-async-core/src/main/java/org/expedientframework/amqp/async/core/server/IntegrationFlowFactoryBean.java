@@ -11,14 +11,21 @@
 
 package org.expedientframework.amqp.async.core.server;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.expression.spel.support.ReflectionHelper;
 import org.springframework.integration.amqp.dsl.Amqp;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Transformers;
 import org.springframework.integration.handler.GenericHandler;
 import org.springframework.messaging.MessageHeaders;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * TODO: Update with a detailed description of the interface/class.
@@ -52,9 +59,29 @@ public class IntegrationFlowFactoryBean extends AbstractFactoryBean<IntegrationF
                       @Override
                       public Object handle(final Object[] payload, final MessageHeaders headers)
                       {
-                        logger.info("### Server called...");
-                        
-                        return "dummyValue";
+                        try
+                        {
+                          // Assuming we always have the methodName
+                          final String methodName = (String) headers.get("remote_gateway_method"); //TODO: Ajey - Use constant !!!
+                          
+                          LOG.info("Executing method [{}]", methodName);
+                          
+                          for (Method method : serviceInstance.getClass().getMethods())
+                          {
+                            if(method.getName().equalsIgnoreCase(methodName))
+                            {
+                              LOG.info("Found method [{}]", method);
+                              return method.invoke(serviceInstance, payload);
+                            }
+                          }
+                          
+                          throw new RuntimeException(String.format("Method [%s] not found on [%s]", methodName, serviceInstance.getClass())); //TODO: Ajey - Throw custom exception !!!
+                        }
+                        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+                        {
+                          LOG.error("An error occurred while executing method.", e);
+                          throw new RuntimeException(e); //TODO: Ajey - Throw custom exception !!!
+                        }
                       }
                     })
                     .transform(Transformers.serializer())
@@ -64,5 +91,6 @@ public class IntegrationFlowFactoryBean extends AbstractFactoryBean<IntegrationF
   
   private final Object serviceInstance;
   private final SimpleMessageListenerContainer messageListenerContainer;
+  private final static Logger LOG = LoggerFactory.getLogger(IntegrationFlowFactoryBean.class);
 }
 
