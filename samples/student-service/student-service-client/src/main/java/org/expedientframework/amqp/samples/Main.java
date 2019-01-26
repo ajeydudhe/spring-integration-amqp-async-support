@@ -52,6 +52,9 @@ public class Main implements CommandLineRunner
     });
     
     LOG.info("Waiting for async call to complete...");
+
+    final Student student = async(studentService.search("searchFirstName01", "searchLastName01")).get();
+    LOG.info("Received blocked calls for student: {}", student);
   }
   
   @Inject
