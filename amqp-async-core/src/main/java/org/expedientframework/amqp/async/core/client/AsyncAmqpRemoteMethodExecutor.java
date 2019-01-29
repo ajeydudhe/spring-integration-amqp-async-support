@@ -14,6 +14,7 @@ package org.expedientframework.amqp.async.core.client;
 import java.lang.reflect.Method;
 import java.util.concurrent.CompletableFuture;
 
+import org.expedientframework.amqp.async.core.exceptions.RemoteMethodExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -76,6 +77,12 @@ public final class AsyncAmqpRemoteMethodExecutor
       
       final GenericMessage<byte[]> resultPayload = new GenericMessage<>(result.getBody());
       final Object finalResult = Transformers.deserializer().doTransform(resultPayload);
+      
+      if(finalResult instanceof RemoteMethodExecutionException)
+      {
+        final RemoteMethodExecutionException exception = (RemoteMethodExecutionException) finalResult;
+        futureResult.completeExceptionally(exception.getCause());
+      }
       
       futureResult.complete((T) finalResult);
     }

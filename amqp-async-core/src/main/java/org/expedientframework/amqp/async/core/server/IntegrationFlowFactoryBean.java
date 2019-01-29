@@ -14,18 +14,15 @@ package org.expedientframework.amqp.async.core.server;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.expedientframework.amqp.async.core.exceptions.RemoteMethodExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.expression.spel.support.ReflectionHelper;
 import org.springframework.integration.amqp.dsl.Amqp;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Transformers;
-import org.springframework.integration.handler.GenericHandler;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * TODO: Update with a detailed description of the interface/class.
@@ -54,34 +51,37 @@ public class IntegrationFlowFactoryBean extends AbstractFactoryBean<IntegrationF
                     .log()
                     .transform(Transformers.deserializer())
                     .log()
-                    .handle(new GenericHandler<Object[]>()
-                    {
-                      @Override
-                      public Object handle(final Object[] payload, final MessageHeaders headers)
+                    .handle(Object[].class, (payload, headers) -> { 
+                      
+                      try
                       {
-                        try
+                        // Assuming we always have the methodName
+                        final String methodName = (String) headers.get("remote_gateway_method"); //TODO: Ajey - Use constant !!!
+                        
+                        LOG.info("Executing method [{}]", methodName);
+                        
+                        for (Method method : serviceInstance.getClass().getMethods())
                         {
-                          // Assuming we always have the methodName
-                          final String methodName = (String) headers.get("remote_gateway_method"); //TODO: Ajey - Use constant !!!
-                          
-                          LOG.info("Executing method [{}]", methodName);
-                          
-                          for (Method method : serviceInstance.getClass().getMethods())
+                          if(method.getName().equalsIgnoreCase(methodName))
                           {
-                            if(method.getName().equalsIgnoreCase(methodName))
-                            {
-                              LOG.info("Found method [{}]", method);
-                              return method.invoke(serviceInstance, payload);
-                            }
+                            LOG.info("Found method [{}]", method);
+                            return method.invoke(serviceInstance, payload);
                           }
-                          
-                          throw new RuntimeException(String.format("Method [%s] not found on [%s]", methodName, serviceInstance.getClass())); //TODO: Ajey - Throw custom exception !!!
                         }
-                        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-                        {
-                          LOG.error("An error occurred while executing method.", e);
-                          throw new RuntimeException(e); //TODO: Ajey - Throw custom exception !!!
-                        }
+                        
+                        throw new RuntimeException(String.format("Method [%s] not found on [%s]", methodName, serviceInstance.getClass())); //TODO: Ajey - Throw custom exception !!!
+                      }
+                      catch (InvocationTargetException e)
+                      {
+                        LOG.error("An error occurred while executing method.", e.getCause());
+                        
+                        return new RemoteMethodExecutionException(e.getCause());
+                      }
+                      catch (IllegalAccessException | IllegalArgumentException e)
+                      {
+                        LOG.error("An error occurred while executing method.", e);
+                        
+                        return new RemoteMethodExecutionException(e);
                       }
                     })
                     .transform(Transformers.serializer())

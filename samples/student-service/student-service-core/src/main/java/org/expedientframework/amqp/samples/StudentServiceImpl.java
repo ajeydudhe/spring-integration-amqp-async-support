@@ -27,6 +27,11 @@ public class StudentServiceImpl implements StudentService
   @Override
   public Student get(final Integer studentId)
   {
+    if(studentId.intValue() == 1234)
+    {
+      throw new StudentNotFoundException(studentId);
+    }
+    
     final Student student = new Student("firstName_" + studentId, "lastName_" + studentId);
     student.setIdentifier(studentId);
     

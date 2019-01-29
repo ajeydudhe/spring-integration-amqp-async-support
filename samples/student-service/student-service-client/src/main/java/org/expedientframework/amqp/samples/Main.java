@@ -45,8 +45,7 @@ public class Main implements CommandLineRunner
     async(studentService.get(1234)).handle((student, exception) -> {
       
       LOG.info("Received async result: {}", student);
-      
-      //TODO: Ajey - Throw on exception !!!
+      LOG.error("Received async exception.", exception);
       
       return student;
     });
@@ -55,6 +54,9 @@ public class Main implements CommandLineRunner
 
     final Student student = async(studentService.search("searchFirstName01", "searchLastName01")).get();
     LOG.info("Received blocked calls for student: {}", student);
+    
+    final Student student02 = async(studentService.get(5678)).get();
+    LOG.info("student02 [{}]", student02);
   }
   
   @Inject
